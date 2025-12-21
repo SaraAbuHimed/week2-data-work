@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-@dataclass(frozon=True)
+@dataclass(frozen=True)
 class Paths:
     root: Path
     raw: Path

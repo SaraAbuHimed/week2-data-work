@@ -1,5 +1,5 @@
 import pandas as pd
-
+import re
 
 def enforce_schema(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -28,3 +28,17 @@ def add_missing_flags(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     for c in cols:
         out[f"{c}_isna"] = out[c].isna()
     return out
+
+_ws = re.compile(r"\s+")
+
+def normalize_text(s: pd.Series) -> pd.Series:
+    return (
+        s.astype("string")
+        .str.strip()
+        .str.casefold()
+        .str.replace(_ws, " ", regex=True)
+    )
+
+
+def apply_mapping(s: pd.Series, mapping: dict[str, str]) -> pd.Series:
+    return s.map(lambda x: mapping.get(x, x))

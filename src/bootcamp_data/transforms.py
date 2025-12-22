@@ -21,6 +21,23 @@ def missingness_report(df: pd.DataFrame) -> pd.DataFrame:
         .assign(p_missing=lambda t: t["n_missing"] / len(df))
         .sort_values("p_missing", ascending=False)
     )
+''' Alternative implementation of missingness_report
+def missingness_report(df):
+    n_rows = len(df)
+
+    n_missing = df.isna().sum()
+
+    p_missing = n_missing / n_rows
+
+    result = pd.DataFrame({
+        "n_missing": n_missing,
+        "p_missing": p_missing
+    })
+
+    result = result.sort_values("p_missing", ascending=False)
+
+    return result
+'''
 
 
 def add_missing_flags(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:

@@ -42,3 +42,11 @@ def normalize_text(s: pd.Series) -> pd.Series:
 
 def apply_mapping(s: pd.Series, mapping: dict[str, str]) -> pd.Series:
     return s.map(lambda x: mapping.get(x, x))
+
+
+def dedupe_keep_latest(df: pd.DataFrame, key_cols: list[str], ts_col: str) -> pd.DataFrame:
+    return (
+        df.sort_values(ts_col)
+        .drop_duplicates(subset=key_cols, keep="last")
+        .reset_index(drop=True)
+    )

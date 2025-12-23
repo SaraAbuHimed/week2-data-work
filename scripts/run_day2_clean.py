@@ -6,18 +6,28 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from bootcamp_data.io import read_orders_csv
-from bootcamp_data.io import read_users_csv
-from bootcamp_data.io import write_parquet
-from bootcamp_data.config import make_paths
-from bootcamp_data.quality import require_columns
-from bootcamp_data.quality import assert_non_empty
-from bootcamp_data.transforms import enforce_schema
-from bootcamp_data.transforms import missingness_report
-from bootcamp_data.transforms import normalize_text
-from bootcamp_data.transforms import apply_mapping
-from bootcamp_data.transforms import add_missing_flags
 
+from bootcamp_data.config import make_paths
+
+from bootcamp_data.io import (
+    read_orders_csv,
+    read_users_csv,
+    write_parquet,
+)
+
+from bootcamp_data.quality import (
+    assert_in_range,
+    assert_non_empty,
+    require_columns,
+)
+
+from bootcamp_data.transforms import (
+    add_missing_flags,
+    apply_mapping,
+    enforce_schema,
+    missingness_report,
+    normalize_text,
+)
 
 paths = make_paths(ROOT)
 
@@ -49,6 +59,8 @@ orders_clean = (
     .assign(status_clean=status_clean)
     .pipe(add_missing_flags, cols=["amount", "quantity"])
 )
+
+assert_in_range(orders_clean["amount"], lo=0, name="amount")
 
 write_parquet(orders_clean, paths.processed / "orders_clean.parquet" )
 write_parquet(users_raw, paths.processed / "users.parquet" )
